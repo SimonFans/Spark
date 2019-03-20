@@ -1,0 +1,18 @@
+# Spark 2.0.0 / Scala 2.11.8
+[maria_dev@sandbox ~]$ export SPARK_MAJOR_VERSION=2
+[maria_dev@sandbox ~]$ spark-shell
+
+scala> val hiveContext = new org.apache.spark.sql.SparkSession.Builder().getOrCreate()
+hiveContext: org.apache.spark.sql.SparkSession = org.apache.spark.sql.SparkSession@62158991
+
+scala> val data = spark.read.format("csv").option("header", "true").load("hdfs:///tmp/*.csv")
+data: org.apache.spark.sql.DataFrame = [rat: string, cell_name: string ... 19 more fields]
+
+scala> data.printSchema()
+
+scala> data.createOrReplaceTempView("data")
+
+scala> val result=hiveContext.sql("SELECT count(*) from data where cell_name like 'E%' and vendor='B'")
+result: org.apache.spark.sql.DataFrame = [count(1): bigint]
+
+result.show()
