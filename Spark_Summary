@@ -1,0 +1,18 @@
+Spark VS Hadoop
+
+1. Data storage structure:
+
+Spark uses memory to create RDD, store intermediate data in memory, computing in memory.
+Hadoop stores intermediate data in disk, HDFS split into multiple blocks.
+
+2. Computing mode:
+
+Spark uses DAG (Direct Acyclic Graph) => Transformation + Action, not only map, reduce method, but use groupby,filter...
+Hadoop => Map + Reduce, many IO operations waste much time.
+
+3. Task process:
+
+Spark uses thread, while Hadoop uses process which needs few seconds to start the task.
+
+
+
