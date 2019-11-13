@@ -1,4 +1,4 @@
-Spark VS Hadoop
+-- Spark VS Hadoop
 
 1. Data storage structure:
 
@@ -13,6 +13,32 @@ Hadoop => Map + Reduce, many IO operations waste much time.
 3. Task process:
 
 Spark uses thread, while Hadoop uses process which needs few seconds to start the task.
+
+
+-- RDD: (Resillient distributed dataset)
+
+Resillient: when dataset size is small, place on one machine, otherwise place on multiple machines.
+
+Distributed: Rdd can be divided into many parts, each part can be on multiple machines.
+
+
+-- Executor: => a process on worknode
+
+Executor can start (one or multiple) threads to run (one or multiple) tasks 
+
+BlockManager in Executor will use both memory and disk to store data, just in case when there's out of memory, it will store data on disk.
+
+
+-- Stage:
+
+Job split into multi group tasks, each group task called stage. 
+
+
+-- Spark component:
+
+one application => one Driver and multiple jobs
+one job => multiple stages
+one stage => multiple tasks
 
 
 
