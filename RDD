@@ -1,2 +1,36 @@
 -- RDD
 
+1. read-only.
+2. you can create a new RDD to make change.
+
+-- RDD method: (map, filter, groupBy, join)
+
+-- RDD implement process:  (Transform & Action), Transform only remember the 轨迹. 
+
+-- RDD 容错性  
+
+1. traditional => 数据复制 或者 记录日志
+2. DAG 重新计算丢失分区，无需回滚系统，重算过程在不同节点间并行
+
+-- RDD 特性：
+1. 高效容错性
+2. 中间结果持久化到内存，数据在内存中的多个RDD操作间进行传递，减免了不必要的读写操作
+3. 存放数据都是java对象，避免了不必要的对象序列化和反序列化（转换成字节流读/写入磁盘）
+
+-- RDD narrow dependency:
+
+one father RDD -> one child RDD.    // map, filter
+multiple father RDD -> one child RDD  // when join 
+
+-- RDD wide dependency:  <shuffle operation> 如果子分区出现问题，想修复困难，因为要从很多父分区恢复
+
+one father -> multiple child RDD. // groupByKey
+
+-- RDD Stage 的划分
+在DAG中进行反向解析，遇到宽依赖就断开，遇到窄依赖就把当前的RDD放入到Stage中，将窄依赖尽量划分到同一个Stage中，实现流水线计算(Mapper/Reducer之间不用互相等)
+
+-- RDD 运行过程
+1. 创建RDD对象
+2. SparkContext 负责计算RDD之间的依赖关系（分别宽依赖和窄依赖），构建DAG
+3. DAG scheduler负责把DAG图分解成多个stage，每个stage中包含多个Task，每个Task会被Task scheduler分发给各个WorkerNode上的executor去执行
+
