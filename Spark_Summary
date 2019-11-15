@@ -43,6 +43,6 @@ one stage => multiple tasks
 
 -- Spark resource management:
 1. Yarn
-2. Mesos
+2. Mesos 粗粒分配到容器
 
 
