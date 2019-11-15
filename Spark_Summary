@@ -41,4 +41,8 @@ one job => multiple stages
 one stage => multiple tasks
 
 
+-- Spark resource management:
+1. Yarn
+2. Mesos
+
 
