@@ -47,7 +47,9 @@ one stage => multiple tasks
 
 
 -- How to run spark-shell
-./bin/spark-shell --master <master-url>
+./bin/spark-shell --master <master-url> --jars
+./bin/spark-shell --help
+启动spark-shell后退出 :quit
 
 # local
 # local[*]
@@ -56,6 +58,7 @@ one stage => multiple tasks
 # yarn-client 已客户端模式连接Yarn集群，集群位置可以在Hadoop_CONF_DIR环境变量中找到, driver在集群之外
 # yarn-cluster 已集群模式连接Yarn集群，集群位置可以在Hadoop_CONF_DIR环境变量中找到，driver放到集群某一台机器
 # mesos://Host:PORT 连接到指定的Mesos集群，默认端口5050
+# --jars 添加多个JAR包，如果有多个，可以用分号(逗号)隔开。
 
 
 
