@@ -46,3 +46,19 @@ one stage => multiple tasks
 2. Mesos 粗粒分配到容器
 
 
+-- How to run spark-shell
+./bin/spark-shell --master <master-url>
+
+# local
+# local[*]
+# local[K] : K is the number of threads, one thread does one task
+# spark://Host:Port 连接到指定的Spark standalone master, default port is 7077
+# yarn-client 已客户端模式连接Yarn集群，集群位置可以在Hadoop_CONF_DIR环境变量中找到, driver在集群之外
+# yarn-cluster 已集群模式连接Yarn集群，集群位置可以在Hadoop_CONF_DIR环境变量中找到，driver放到集群某一台机器
+# mesos://Host:PORT 连接到指定的Mesos集群，默认端口5050
+
+
+
+
+
+
