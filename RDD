@@ -34,3 +34,37 @@ one father -> multiple child RDD. // groupByKey
 2. SparkContext 负责计算RDD之间的依赖关系（分别宽依赖和窄依赖），构建DAG
 3. DAG scheduler负责把DAG图分解成多个stage，每个stage中包含多个Task，每个Task会被Task scheduler分发给各个WorkerNode上的executor去执行
 
+-- RDD 创建
+1. val lines = sc.textFile("file:///usr/local/spark/word.txt")  本地文件系统
+   val lines = sc.textFile("hdfs://localhost:9000/user/hadoop/word.txt")
+   val lines = sc.textFile("/user/hadoop/word.txt")
+2. 通过并行集合（数组）创建RDD
+   val array = Array(1,2,3,4,5)
+   val rdd = sc.parallelize(array) 
+   val list = List(1,2,3,4,5)
+   val rdd = sc.parallelize(list)
+   
+-- RDD 编程
+1. filter()
+
+val lines = sc.textFile("file///...")
+lines.filter(line=>line.contains("Spark")).count()   // count 计算最终RDD里的元素数目
+
+2. map() & reduce()
+
+val lines = sc.textFile("file:///...")
+lines.map(line => line.split(" ").size).reduce((a,b)=> if (a>b) a else b)
+
+-- Rdd 持久化
+via using persist() 对一个RDD标记为持久化,当遇到第一个行动操作时才会真正的帮你做缓存 
+
+persisit(MEMORY_ONLY)   === cache()
+persisit(MEMORY_AND_DISK)
+unpersist() 不需要持久化的时候可以删掉
+
+
+
+
+
+
+
