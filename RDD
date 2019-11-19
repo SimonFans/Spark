@@ -62,6 +62,35 @@ persisit(MEMORY_ONLY)   === cache()
 persisit(MEMORY_AND_DISK)
 unpersist() 不需要持久化的时候可以删掉
 
+-- Rdd 分区
+原则是尽量等于集群中CPU(core)的数目
+spark.default.parallelism
+// 手动指定分区数量
+sc.textFile(path,partitionNum)
+sc.parallize(array,2)  2个分区
+.repartition(N)   N is the parition number, when data became less
+
+-- RDD 打印
+1. 如果在单机情况下，可以直接使用rdd.foreach(println)
+2. 如果是集群模式，需要看所有结果，需要用rdd.collect().foreach(println)
+   因为集群模式数据会在不同worker node上，所以先要收集worker node上所有RDD元素到Driver
+3. collect()有时候可能会导致内存溢出，这时候可以用rdd.take(100).foreach(println)
+
+-- Pair RDD 创建
+1. 从文件中加载 例子：word count
+2. 通过并行集合（数组）创建RDD 例子：list -> parallelize -> map
+
+-- 常用的RDD转换操作
+1. reduceByKey(func)
+example: pairRDD.reduceByKey((a,b)=>a+b).foreach(println)
+a,b 都是数字，假设他们对应相同的Key，则会加起来
+
+2. groupByKey()
+example: pairRDD.groupByKey() => RDD[String,Iterable[Int]]
+("spark",1),("spark",2),("java",3),("java",5) => ("spark",(1,2)) and ("java",(3,5))
+
+
+
 
 
 
