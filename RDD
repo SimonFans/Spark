@@ -126,6 +126,27 @@ pairRDD1.join(pairRDD2)   => (spark,(1,fast))
                              (spark,(2,fast))
                              
 
+-- RDD 求平均实例
+
+val rdd = sc.parallelize(Array(("spark,2"),("spark",6),("hadoop",6),("hadoop",4)))
+
+## rdd
+("spark,2") ("spark",6) ("hadoop",6) ("hadoop",4)
+
+rdd.mapValues(x=>(x,1)).reduceByKey((x,y)=>(x._1+y._1,x._2+y._2)).mapValues(x=>(x._1/x._2)).collect()
+
+# rdd after mapValues
+("spark",(2,1)) ("spark",(6,1)) ("hadoop",(6,1)) ("hadoop",(4,1))
+
+# rdd after reduceByKey
+("spark",(8,2)) ("hadoop",(10,2))
+
+# rdd after second mapValues
+("spark",4) ("hadoop",5)
+
+-- RDD shared variable
+
+
 
 
 
