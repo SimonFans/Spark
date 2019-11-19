@@ -100,6 +100,35 @@ val wordCountsWithGroup = wordPairsRDD.groupByKey().map(t=>(t._1,t._2.sum))
 当用reduceByKey(), Spark可以在每个分区移动数据之前将待输出数据与一个共用的Key结合，减少通信开销。
 当用groupByKey(), 因为其不接收函数，Spark只能先将所有键值对都移动，结果是集群间开销很大，导致传输延迟
 
+-- RDD keys, values, sortByKey()
+
+# 只取键值形成一个新的RDD
+pairRDD.keys 
+
+# 只取value形成一个新的RDD
+pairRDD.values
+
+# 排序，默认为生序排列
+pairRDD.sortByKey().foreach(println)
+pairRDD.reduceByKey(_+_).sortByKey(false).collect
+pairRDD.reduceByKey(_+_).sortBy(_._2,false).collect  根据值降序
+pairRDD.map(t=>(t._2,t._1)).sortByKey(false).map(t=>(t._2,t._1)).foreach(println)
+
+-- RDD mapValues(func) & join: (K,V1) and (K,V2) => (K,(V1,V2))
+
+pairRDD.mapValues(x=>x+1).foreach(println)
+
+val pairRDD1 = sc.parallelize(Array(("spark,1"),("spark",2),("hadoop",3),("hadoop",5)))
+
+val pairRDD2 = sc.parallelize(Array(("spark","fast")))
+
+pairRDD1.join(pairRDD2)   => (spark,(1,fast))
+                             (spark,(2,fast))
+                             
+
+
+
+
 
 
 
