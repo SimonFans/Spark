@@ -89,8 +89,16 @@ a,b 都是数字，假设他们对应相同的Key，则会加起来
 example: pairRDD.groupByKey() => RDD[String,Iterable[Int]]
 ("spark",1),("spark",2),("java",3),("java",5) => ("spark",(1,2)) and ("java",(3,5))
 
+example:
 
+val words = Array("one","two","two","three","three","three")
+val wordPairsRDD = sc.parallelize(words).map(word=>(word,1))
+val wordCountsWithReduce = wordPairsRDD.reduceByKey(_+_) 
+val wordCountsWithGroup = wordPairsRDD.groupByKey().map(t=>(t._1,t._2.sum))
 
+上面二者区别：
+当用reduceByKey(), Spark可以在每个分区移动数据之前将待输出数据与一个共用的Key结合，减少通信开销。
+当用groupByKey(), 因为其不接收函数，Spark只能先将所有键值对都移动，结果是集群间开销很大，导致传输延迟
 
 
 
