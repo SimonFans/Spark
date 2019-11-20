@@ -145,6 +145,26 @@ rdd.mapValues(x=>(x,1)).reduceByKey((x,y)=>(x._1+y._1,x._2+y._2)).mapValues(x=>(
 ("spark",4) ("hadoop",5)
 
 -- RDD shared variable
+减少数据传输量的问题，在executor内部，所有core（线程）共享这个变量。
+
+Broadcast variable (缓存一个只读变量): 在所有节点的内存间进行共享.Spark行动操作会跨越多个stage，对于每个stage内的所有任务
+                                    所需要的公共数据，spark都会自动进行广播，广播到executor上。
+                                    
+example:             val broadcastVar = sc.broadcast(Array(1,2,3))
+get value:           broadcastVar.value
+                   
+accumulator： 不同节点间进行累加运算,计数求和。
+
+# 数值型累加器，如下两种，用add方法来把数值累加到累加器上。当数据量很大的时候，会在不同节点上进行累加操作，最后由driver读取结果。
+              SparkContext.longAccumulator()
+              SparkContext.doubleAccumulator() 
+
+example:      val accum = sc.longAccumulator("My Accumulator")
+              sc.parallelize(Array(1,2,3,4)).foreach(x=> accum.add(x))
+              accum.value
+              
+              
+
 
 
 
