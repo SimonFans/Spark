@@ -138,26 +138,3 @@ $ /usr/local/spark/bin/spark-submit   \
 // check table info
 
 hbase > scan 'student'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
