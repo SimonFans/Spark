@@ -36,3 +36,128 @@ hbase > put 'student', '2', 'info:name','Jane'
 hbase > put 'student', '2', 'info:gender','F'
 hbase > put 'student', '2', 'info:age','20'
 
+// Read data from HBase
+/*
+Copy some jars under HBase/lib to /usr/local/spark/jars, file including all jars that name starts with hbase*, guava-21.0.1.jar, htrace-core-3.1.0-incubating.jar, protobuf-java-2.5.0.jar
+*/
+
+SparkOperateHBase.scala =>
+
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.hbase._
+import org.apache.hadoop.hbase.client._
+import org.apache.hadoop.hbase.mapreduce.TableInputFormat
+import org.apache.hadoop.hbase.util.Bytes
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkContext._
+import org.apache.spark.SparkConf
+
+object SparkOperateHBase {
+def main(args: Array[String]) {
+    val conf = HBaseConfiguration.create()
+    val sc = new SparkContext(new SparkConf())
+    //设置查询的表名
+    conf.set(TableInputFormat.INPUT_TABLE, "student")
+    val stuRDD = sc.newAPIHadoopRDD(conf, classOf[TableInputFormat],
+  classOf[org.apache.hadoop.hbase.io.ImmutableBytesWritable],
+  classOf[org.apache.hadoop.hbase.client.Result])
+    val count = stuRDD.count()
+    println("Students RDD Count:" + count)
+    stuRDD.cache()
+    //遍历输出
+    stuRDD.foreach({ case (_,result) =>
+        val key = Bytes.toString(result.getRow)
+        val name = Bytes.toString(result.getValue("info".getBytes,"name".getBytes))
+        val gender = Bytes.toString(result.getValue("info".getBytes,"gender".getBytes))
+        val age = Bytes.toString(result.getValue("info".getBytes,"age".getBytes))
+        println("Row key:"+key+" Name:"+name+" Gender:"+gender+" Age:"+age)
+    })
+}
+}
+
+// Use sbt to package
+
+simple.sbt =>
+
+name := "Simple Project"
+version := "1.0"
+scalaVersion := "2.11.8"
+libraryDependencies += "org.apache.spark" %% "spark-core" % "2.1.0"
+libraryDependencies += "org.apache.hbase" % "hbase-client" % "1.1.5"
+libraryDependencies += "org.apache.hbase" % "hbase-common" % "1.1.5"
+libraryDependencies += "org.apache.hbase" % "hbase-server" % "1.1.5"
+
+// Run spark-submit command
+
+$ /usr/local/spark/bin/spark-submit   \
+> --driver-class-path /usr/local/spark/jars/hbase/*:/usr/local/hbase/conf  \
+> --class "SparkOperateHBase"   \
+> /usr/local/spark/mycode/hbase/target/scala-2.11/simple-project_2.11-1.0.jar
+
+必须使用“--driver-class-path”参数指定依赖JAR包的路径，而且必须把“/usr/local/hbase/conf”也加到路径中
+
+// Result
+
+Students RDD Count:2
+Row key:1 Name:Xueqian Gender:F Age:23
+Row key:2 Name:Weiliang Gender:M Age:24
+
+// Write data into HBase
+
+SparkWriteHBase.scala =>
+
+object SparkWriteHBase {  
+  def main(args: Array[String]): Unit = {  
+    val sparkConf = new SparkConf().setAppName("SparkWriteHBase").setMaster("local")  
+    val sc = new SparkContext(sparkConf)        
+    val tablename = "student"        
+    sc.hadoopConfiguration.set(TableOutputFormat.OUTPUT_TABLE, tablename)  
+    val job = new Job(sc.hadoopConfiguration)  
+    job.setOutputKeyClass(classOf[ImmutableBytesWritable])  
+    job.setOutputValueClass(classOf[Result])    
+    job.setOutputFormatClass(classOf[TableOutputFormat[ImmutableBytesWritable]])    
+    val indataRDD = sc.makeRDD(Array("3,Rongcheng,M,26","4,Guanhua,M,27")) //构建两行记录
+    val rdd = indataRDD.map(_.split(',')).map{arr=>{  
+      val put = new Put(Bytes.toBytes(arr(0))) //行健的值 
+      put.add(Bytes.toBytes("info"),Bytes.toBytes("name"),Bytes.toBytes(arr(1)))  //info:name列的值
+      put.add(Bytes.toBytes("info"),Bytes.toBytes("gender"),Bytes.toBytes(arr(2)))  //info:gender列的值
+      put.add(Bytes.toBytes("info"),Bytes.toBytes("age"),Bytes.toBytes(arr(3).toInt))  //info:age列的值
+      (new ImmutableBytesWritable, put)   
+    }}        
+    rdd.saveAsNewAPIHadoopDataset(job.getConfiguration())  
+  }    
+} 
+
+// Run spark-submit
+
+$ /usr/local/spark/bin/spark-submit   \
+>--driver-class-path /usr/local/spark/jars/hbase/*:/usr/local/hbase/conf   \
+>--class "SparkWriteHBase"   \
+>/usr/local/spark/mycode/hbase/target/scala-2.11/simple-project_2.11-1.0.jar
+
+// check table info
+
+hbase > scan 'student'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
