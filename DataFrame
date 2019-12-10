@@ -8,6 +8,8 @@ import org.apache.spark.sql.SparkSession
 scala> val spark = SparkSession.builder().getOrCreate()
 spark: org.apache.spark.sql.SparkSession = org.apache.spark.sql.SparkSession@6a2badb1
 
+// 隐士转换的目的是让接下来读进来的RDD转换成DataFrame
+
 scala> import spark.implicits._
 import spark.implicits._
 
