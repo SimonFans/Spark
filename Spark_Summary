@@ -61,7 +61,15 @@ one stage => multiple tasks
 # --jars 添加多个JAR包，如果有多个，可以用分号(逗号)隔开。
 
 
+Repartition VS Coalesce
 
+-- Repartition:
+The repartition algorithm does a full shuffle and creates new partitions with data that's distributed evenly.
+
+-- Coalesce:
+It avoids a full shuffle. 
+If it's known that the number is decreasing then the executor can safely keep data on the minimum number of partitions, 
+only moving the data off the extra nodes, onto the nodes that we kept.
 
 
 
