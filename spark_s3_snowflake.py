@@ -317,7 +317,7 @@ while len(table_names)>0:
 
 print('Start to write into the CSV file')
 res2=pd.DataFrame(dict([(k,pd.Series(v)) for k,v in Diff_Dict.items()]))
-res2.to_csv('/Users/<username>/Documents/Gainsight/Row_Count_Comparison.csv',index=False)
+res2.to_csv('/Users/<username>/Documents/Row_Count_Comparison.csv',index=False)
 print('Done :)')
 
 # spark and sparkContext stop
