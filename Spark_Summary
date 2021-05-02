@@ -89,6 +89,18 @@ GroupByKey: RDD[(String, Iterable[Int])]
 但是reduceByKey可以在shuffle前对分区内相同key的数据进行预聚合(combine)功能，这样会减少落盘的数据量，而groupByKey只是进行分组，不存在数据量减少的问题，reduceByKey性能比较高。
 从功能的角度:reduceByKey其实包含分组和聚合的功能。GroupByKey只能分组，不能聚合，所以在分组聚合的场合下，推荐使用reduceByKey，如果仅仅是分组而不需要聚合。那么还是只能使用groupByKey
 
+-- AggregateByKey:
+aggregateByKey方法用于当分区内的计算和分区间的计算不一样的时候，比如如下例。求分区内的最大值，再将每个分区的最大值加起来。
+aggregateByKey有两个参数列表。第一个参数需要传递一个参数，表示为初始值，主要用于当碰见第一个Key时，和value进行分区内计算。
+第二个参数需要传递两个参数，第一个参数表示分区内计算规则，第二个参数表示为分区间的计算规则
+    val rdd = sc.makeRDD(List(("a",1),("a",2),("a",3),("a",4)),2)
+    val aggregateRdd = rdd.aggregateByKey(0)(
+      (x,y) => math.max(x,y),
+      (x,y) => x+ y
+    )
+
+
+
 ** Refer to ShangXueTang Youtube Video
 
 
