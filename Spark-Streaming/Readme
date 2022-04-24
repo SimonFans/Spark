@@ -1,0 +1,41 @@
+# Spark Streaming + Kafka 3.0.x + Scala 2.12.x
+
+(I) Start steps:
+(1) Start zookeeper. 
+bin/zookeeper-server-start.sh config/zookeeper.properties &
+(2) Start kafka cluster.
+Go to the path, type: ./kf.sh start
+##### write a shell script #####
+#!/bin/sh
+
+case $1 in
+   "start") echo "--- start kafka ---" 
+   /Users/simon.zhao/Documents/kafka_2.12-3.0.0/bin/kafka-server-start.sh -daemon /Users/simon.zhao/Documents/kafka_2.12-3.0.0/config/server.properties
+   ;;
+   "stop") echo "--- stop kafka ---" 
+   "/Users/simon.zhao/Documents/kafka_2.12-3.0.0/bin/kafka-server-stop.sh"
+   ;;
+
+(3) Run jps to check the zookeeper & kafka process status.
+35079 Kafka
+34432 QuorumPeerMain
+
+(4) List all current topics.
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+
+(5) Create a topic. <This is not for cluster settings, since you don't have a list of servers, you only have one broker/server, partitions cannot > 1>
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic streamingdata --partitions 1 --replication-factor 1
+
+(6) Start running producer to publish messages to the topic.
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic streamingdata
+
+(II) Stop steps:
+(1) Stop kafka cluster first!! 
+Go to the above shell script path, type: ./kf.sh stop
+(2) Run jps to make sure Kakfa process has been stopped
+(3) Stop zookeeper
+bin/zookeeper-server-stop.sh config/zookeeper.properties &
+
+
+
+
